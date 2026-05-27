@@ -55,7 +55,7 @@ export default function HomePage() {
       {/* Chapter Selection */}
       <div className="chapters-grid">
         {CHAPTERS.map((ch) => {
-          const exercises = rules[ch.id.replace('chapter', '').replace('bonus', 'bonus')]?.exercises
+          const exercises = rules[ch.id]?.exercises
           const totalQ = exercises?.length || 0
           const prog = getChapterProgress(ch.id)
           const pct = totalQ > 0 ? Math.min(100, Math.round((prog.completed / totalQ) * 100)) : 0

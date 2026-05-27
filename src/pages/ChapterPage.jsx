@@ -57,9 +57,17 @@ export default function ChapterPage() {
   const { userProfile } = useAuth()
   const { saveProgress, getChapterProgress } = useProgress()
 
+  const EXERCISES_PER_SESSION = 15
+
   const chapter = rules[chapterId]
-  const exercises = chapter?.exercises || []
+  const allExercises = chapter?.exercises || []
   const writingConfig = WRITING_CONFIG[chapterId]
+
+  // Shuffle and pick random subset on mount
+  const exercises = useState(() => {
+    const shuffled = [...allExercises].sort(() => Math.random() - 0.5)
+    return shuffled.slice(0, Math.min(EXERCISES_PER_SESSION, shuffled.length))
+  })[0]
 
   // Tab state
   const [activeTab, setActiveTab] = useState('exercises')

@@ -22,3 +22,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+.vercel
+bonus_bq19_bq60.js
