@@ -48,15 +48,15 @@ export default function ParentDashboard() {
       <div className="parent-dashboard">
         <div className="chapter-header">
           <Link to="/" className="back-btn">← Back</Link>
-          <span style={{ fontSize: 18, fontWeight: 800 }}>👨‍👩‍👧 Parent 家長模式</span>
+          <span style={{ fontSize: 18, fontWeight: 800 }}>👨‍👩‍👧 Parent Dashboard</span>
           <div />
         </div>
 
         <div style={{ padding: '20px 16px' }}>
           <div className="parent-card" style={{ maxWidth: 340, margin: '0 auto', textAlign: 'center' }}>
-            <div className="parent-card-title">🔒 輸入 PIN 碼</div>
+            <div className="parent-card-title">🔒 Enter PIN</div>
             <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-light)', marginBottom: 20 }}>
-              請輸入 PIN 碼以查看家長模式
+              Enter PIN to access Parent Dashboard
             </div>
 
             <form onSubmit={handlePinSubmit}>
@@ -70,7 +70,7 @@ export default function ParentDashboard() {
                   setPin(e.target.value.replace(/\D/g, ''))
                   setPinError(false)
                 }}
-                placeholder="輸入 4 位 PIN 碼"
+                placeholder="Enter 4-digit PIN"
                 style={{
                   width: '100%',
                   maxWidth: 200,
@@ -91,7 +91,7 @@ export default function ParentDashboard() {
 
               {pinError && (
                 <div style={{ color: 'var(--red)', fontSize: 14, fontWeight: 700, marginTop: 12 }}>
-                  ❌ PIN 碼錯誤，請再試一次
+                  ❌ Wrong PIN, please try again
                 </div>
               )}
 
@@ -101,7 +101,7 @@ export default function ParentDashboard() {
                 style={{ marginTop: 16, width: '100%', maxWidth: 200 }}
                 disabled={pin.length !== 4}
               >
-                🔓 解鎖
+                🔓 Unlock
               </button>
             </form>
           </div>
@@ -114,7 +114,7 @@ export default function ParentDashboard() {
 
   const totalStars = userProfile?.totalStars || 0
   const level = userProfile?.level || 'English Star ⭐'
-  const nickname = userProfile?.nickname || '小朋友'
+  const nickname = userProfile?.nickname || 'Kid'
   const quizResults = userProfile?.quizResults || []
   const writings = userProfile?.writings || []
 
@@ -123,40 +123,40 @@ export default function ParentDashboard() {
       {/* Header */}
       <div className="chapter-header">
         <Link to="/" className="back-btn">← Back</Link>
-        <span style={{ fontSize: 18, fontWeight: 800 }}>👨‍👩‍👧 家長模式</span>
+        <span style={{ fontSize: 18, fontWeight: 800 }}>👨‍👩‍👧 Parent Dashboard</span>
         <div />
       </div>
 
       {/* Child Info */}
       <div className="parent-card">
-        <div className="parent-card-title">👤 {nickname} 嘅學習概覽</div>
+        <div className="parent-card-title">👤 {nickname}'s Learning Overview</div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 12 }}>
           <div className="progress-stat-card" style={{ flex: '1 1 100px' }}>
             <div className="progress-stat-icon">⭐</div>
             <div className="progress-stat-value">{totalStars}</div>
-            <div className="progress-stat-label">總星星</div>
+            <div className="progress-stat-label">Total Stars</div>
           </div>
           <div className="progress-stat-card" style={{ flex: '1 1 100px' }}>
             <div className="progress-stat-icon">👑</div>
             <div className="progress-stat-value" style={{ fontSize: 14 }}>{level}</div>
-            <div className="progress-stat-label">等級</div>
+            <div className="progress-stat-label">Level</div>
           </div>
           <div className="progress-stat-card" style={{ flex: '1 1 100px' }}>
             <div className="progress-stat-icon">📝</div>
             <div className="progress-stat-value">{quizResults.length}</div>
-            <div className="progress-stat-label">測驗</div>
+            <div className="progress-stat-label">Quizzes</div>
           </div>
           <div className="progress-stat-card" style={{ flex: '1 1 100px' }}>
             <div className="progress-stat-icon">✏️</div>
             <div className="progress-stat-value">{writings.length}</div>
-            <div className="progress-stat-label">作文</div>
+            <div className="progress-stat-label">Writings</div>
           </div>
         </div>
       </div>
 
       {/* Progress Per Chapter */}
       <div className="parent-card">
-        <div className="parent-card-title">📖 章節進度</div>
+        <div className="parent-card-title">📖 Chapter Progress</div>
         {CHAPTER_INFO.map((ch) => {
           const exercises = rules[ch.id]?.exercises || []
           const totalQ = exercises.length
@@ -180,7 +180,7 @@ export default function ParentDashboard() {
               <div className="progress-chapter-stars">
                 ⭐ {prog.stars}<br />
                 <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-light)' }}>
-                  {prog.completed}/{totalQ} 題
+                  {prog.completed}/{totalQ} done
                 </span>
               </div>
             </div>
@@ -190,10 +190,10 @@ export default function ParentDashboard() {
 
       {/* Quiz Results History */}
       <div className="parent-card">
-        <div className="parent-card-title">📋 測驗記錄</div>
+        <div className="parent-card-title">📋 Quiz History</div>
         {quizResults.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-light)', fontWeight: 600 }}>
-            未有測驗記錄
+            No quiz records yet
           </div>
         ) : (
           [...quizResults].reverse().map((result, i) => (
@@ -207,10 +207,10 @@ export default function ParentDashboard() {
                 </span>
               </div>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-light)', marginTop: 2 }}>
-                ⭐ 獲得 +{result.starEarned} 星星
+                ⭐ +{result.starEarned} stars earned
                 {result.bonus > 0 && (
                   <span style={{ color: 'var(--green-dark)', marginLeft: 6 }}>
-                    （滿分獎勵 +{result.bonus}）
+                    (Perfect score bonus +{result.bonus})
                   </span>
                 )}
               </div>
@@ -221,10 +221,10 @@ export default function ParentDashboard() {
 
       {/* Writings */}
       <div className="parent-card">
-        <div className="parent-card-title">✏️ 已儲存嘅作文</div>
+        <div className="parent-card-title">✏️ Saved Writings</div>
         {writings.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-light)', fontWeight: 600 }}>
-            未有寫作記錄
+            No writings yet
           </div>
         ) : (
           [...writings].reverse().map((writing, i) => (
@@ -254,7 +254,7 @@ export default function ParentDashboard() {
       {/* Back to Home */}
       <div style={{ textAlign: 'center', marginTop: 20, marginBottom: 30 }}>
         <Link to="/" className="submit-btn" style={{ display: 'inline-block', padding: '12px 28px', textDecoration: 'none' }}>
-          🏠 返去主頁
+          🏠 Back to Home
         </Link>
       </div>
     </div>

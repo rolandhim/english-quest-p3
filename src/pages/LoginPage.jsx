@@ -28,10 +28,10 @@ export default function LoginPage() {
     e.preventDefault()
     setRegError('')
 
-    if (!regNick.trim()) { setRegError('請輸入小朋友嘅名～'); return }
-    if (!regEmail.trim()) { setRegError('請輸入電郵地址～'); return }
-    if (regPwd.length < 6) { setRegError('密碼最少要 6 個字元喔～'); return }
-    if (regPwd !== regConfirm) { setRegError('兩次密碼唔一樣，檢查下先～'); return }
+    if (!regNick.trim()) { setRegError("Please enter your child's name"); return }
+    if (!regEmail.trim()) { setRegError('Please enter an email'); return }
+    if (regPwd.length < 6) { setRegError('Password must be at least 6 characters'); return }
+    if (regPwd !== regConfirm) { setRegError('Passwords do not match'); return }
 
     setRegLoading(true)
     const ok = await register(regEmail.trim(), regPwd, regNick.trim())
@@ -43,7 +43,7 @@ export default function LoginPage() {
     <div className="home" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: '100vh' }}>
       <header className="home-header">
         <h1 className="home-title">English Quest P3 🏴󠁧󠁢󠁥󠁮󠁧󠁿</h1>
-        <p className="home-subtitle">小三英文練習 — 邊玩邊學！</p>
+        <p className="home-subtitle">P3 English Practice — Learn through play!</p>
       </header>
 
       <div className="login-tabs">
@@ -51,35 +51,35 @@ export default function LoginPage() {
           className={`login-tab ${tab === 'login' ? 'login-tab-active' : ''}`}
           onClick={() => setTab('login')}
         >
-          🔑 登入
+          🔑 Login
         </button>
         <button
           className={`login-tab ${tab === 'register' ? 'login-tab-active' : ''}`}
           onClick={() => setTab('register')}
         >
-          ✨ 新用戶註冊
+          ✨ Register
         </button>
       </div>
 
       {tab === 'login' && (
         <form className="login-form slide-up" onSubmit={handleLogin}>
           <div className="login-field">
-            <label className="login-label">📧 電郵</label>
+            <label className="login-label">📧 Email</label>
             <input
               className="login-input"
               type="email"
-              placeholder="你的電郵地址"
+              placeholder="Your email address"
               value={loginEmail}
               onChange={(e) => setLoginEmail(e.target.value)}
               autoComplete="email"
             />
           </div>
           <div className="login-field">
-            <label className="login-label">🔒 密碼</label>
+            <label className="login-label">🔒 Password</label>
             <input
               className="login-input"
               type="password"
-              placeholder="輸入密碼"
+              placeholder="Enter password"
               value={loginPwd}
               onChange={(e) => setLoginPwd(e.target.value)}
               autoComplete="current-password"
@@ -89,7 +89,7 @@ export default function LoginPage() {
           {error && <div className="login-error">{error}</div>}
 
           <button className="login-submit" type="submit" disabled={loginLoading}>
-            {loginLoading ? '⏳ 登入中...' : '🔑 登入'}
+            {loginLoading ? '⏳ Logging in...' : '🔑 Login'}
           </button>
         </form>
       )}
@@ -97,43 +97,43 @@ export default function LoginPage() {
       {tab === 'register' && (
         <form className="login-form slide-up" onSubmit={handleRegister}>
           <div className="login-field">
-            <label className="login-label">🧒 小朋友嘅名字</label>
+            <label className="login-label">🧒 Child's Name</label>
             <input
               className="login-input"
-              placeholder="例如：小明"
+              placeholder="e.g. Ming"
               value={regNick}
               onChange={(e) => setRegNick(e.target.value)}
               maxLength={10}
             />
           </div>
           <div className="login-field">
-            <label className="login-label">📧 電郵（家長）</label>
+            <label className="login-label">📧 Email (Parent)</label>
             <input
               className="login-input"
               type="email"
-              placeholder="家長的電郵地址"
+              placeholder="Parent's email"
               value={regEmail}
               onChange={(e) => setRegEmail(e.target.value)}
               autoComplete="email"
             />
           </div>
           <div className="login-field">
-            <label className="login-label">🔒 密碼（最少 6 位）</label>
+            <label className="login-label">🔒 Password (min 6 chars)</label>
             <input
               className="login-input"
               type="password"
-              placeholder="設定密碼"
+              placeholder="Set password"
               value={regPwd}
               onChange={(e) => setRegPwd(e.target.value)}
               autoComplete="new-password"
             />
           </div>
           <div className="login-field">
-            <label className="login-label">🔒 確認密碼</label>
+            <label className="login-label">🔒 Confirm Password</label>
             <input
               className="login-input"
               type="password"
-              placeholder="再打一次密碼"
+              placeholder="Confirm password"
               value={regConfirm}
               onChange={(e) => setRegConfirm(e.target.value)}
               autoComplete="new-password"
@@ -145,7 +145,7 @@ export default function LoginPage() {
           )}
 
           <button className="login-submit" type="submit" disabled={regLoading}>
-            {regLoading ? '⏳ 建立中...' : '✨ 建立帳號'}
+            {regLoading ? '⏳ Creating...' : '✨ Create Account'}
           </button>
         </form>
       )}

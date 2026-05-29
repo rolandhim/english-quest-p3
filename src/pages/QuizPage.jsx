@@ -20,18 +20,14 @@ function pickQuestions() {
 }
 
 const CORRECT_MESSAGES = [
-  '🌟 啱晒！Great job!',
-  '✅ 好嘢！You got it!',
-  '🎉 正確！Well done!',
-  '💪 叻仔叻女！Excellent!',
-  '⭐ 答對啦！Keep it up!',
+  '🌟 Great job!',
+  '✅ You got it!',
+  '🎉 Well done!',
+  '💪 Excellent!',
+  '⭐ Keep it up!',
 ]
 
-const WRONG_MESSAGES = [
-  '🤔 差少少，再試試！',
-  '💪 加油！唔好放棄！',
-  '📖 睇下 hint 先～',
-]
+const TRY_AGAIN_MESSAGE = 'Not quite! Look at the hint above and try again! 💪'
 
 function getRandomMessage(messages) {
   return messages[Math.floor(Math.random() * messages.length)]
@@ -45,7 +41,8 @@ export default function QuizPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userAnswer, setUserAnswer] = useState('')
   const [selectedOption, setSelectedOption] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+  const [attempts, setAttempts] = useState(0)
   const [isCorrect, setIsCorrect] = useState(false)
   const [score, setScore] = useState(0)
   const [finished, setFinished] = useState(false)
@@ -53,16 +50,18 @@ export default function QuizPage() {
   const [savedResult, setSavedResult] = useState(null)
 
   const currentQuestion = questions[currentIndex]
+  const MAX_ATTEMPTS = 2
 
   function resetForNewQuestion() {
     setUserAnswer('')
     setSelectedOption('')
-    setSubmitted(false)
+    setShowResult(false)
+    setAttempts(0)
     setIsCorrect(false)
   }
 
   function handleSubmit() {
-    if (!currentQuestion || submitted) return
+    if (!currentQuestion || showResult) return
 
     let correct = false
     if (currentQuestion.type === 'fill') {
@@ -72,10 +71,20 @@ export default function QuizPage() {
     }
 
     setIsCorrect(correct)
-    setSubmitted(true)
 
     if (correct) {
+      setShowResult(true)
       setScore((prev) => prev + 1)
+    } else {
+      const newAttempts = attempts + 1
+      setAttempts(newAttempts)
+      if (newAttempts >= MAX_ATTEMPTS) {
+        setShowResult(true)
+      } else {
+        // Clear input for retry
+        setUserAnswer('')
+        setSelectedOption('')
+      }
     }
   }
 
@@ -105,7 +114,8 @@ export default function QuizPage() {
     setCurrentIndex(0)
     setUserAnswer('')
     setSelectedOption('')
-    setSubmitted(false)
+    setShowResult(false)
+    setAttempts(0)
     setIsCorrect(false)
     setScore(0)
     setFinished(false)
@@ -114,7 +124,7 @@ export default function QuizPage() {
   }
 
   function handleKeyDown(e) {
-    if (e.key === 'Enter' && !submitted) {
+    if (e.key === 'Enter' && !showResult) {
       handleSubmit()
     }
   }
@@ -126,15 +136,15 @@ export default function QuizPage() {
     if (score === TOTAL_QUESTIONS) {
       icon = '🌟'
       message = "Amazing! You're a star! ⭐"
-      detail = '滿分！你係英文之星！🎉'
+      detail = 'Perfect score! Congratulations! 🎉'
     } else if (score >= 7) {
       icon = '😊'
       message = 'Great job! Keep it up! 😊'
-      detail = '做得好！繼續努力！💪'
+      detail = 'Well done! Keep practising! 💪'
     } else {
       icon = '💪'
       message = "Don't give up! Try again! 💪"
-      detail = '加油！下次一定得！🔥'
+      detail = "You'll do better next time! 🔥"
     }
 
     return (
@@ -148,16 +158,16 @@ export default function QuizPage() {
 
         {savedResult && (
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--green-dark)', marginTop: 12 }}>
-            ⭐ +{savedResult.starEarned} 星星{savedResult.bonus > 0 ? ` （滿分獎勵 +${savedResult.bonus}）` : ''}
+            ⭐ +{savedResult.starEarned} Stars{savedResult.bonus > 0 ? ` (Perfect bonus +${savedResult.bonus})` : ''}
           </div>
         )}
 
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 20 }}>
           <button className="submit-btn" onClick={handleRetry}>
-            🔄 再玩一次
+            🔄 Try Again
           </button>
           <Link to="/" className="submit-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
-            🏠 返去主頁
+            🏠 Back to Home
           </Link>
         </div>
       </div>
@@ -170,6 +180,7 @@ export default function QuizPage() {
     if (!currentQuestion) return null
 
     const progressPct = Math.round((currentIndex / TOTAL_QUESTIONS) * 100)
+    const firstAttemptWrong = attempts > 0 && !showResult
 
     return (
       <div className="exercise-card">
@@ -187,6 +198,13 @@ export default function QuizPage() {
         <div className="exercise-question">{currentQuestion.question}</div>
         <div className="exercise-hint">{currentQuestion.hint}</div>
 
+        {/* First attempt wrong - try again message */}
+        {firstAttemptWrong && (
+          <div className="feedback-retry">
+            {TRY_AGAIN_MESSAGE}
+          </div>
+        )}
+
         {/* Input area */}
         {currentQuestion.type === 'fill' ? (
           <input
@@ -195,15 +213,15 @@ export default function QuizPage() {
             value={userAnswer}
             onChange={(e) => setUserAnswer(e.target.value)}
             onKeyDown={handleKeyDown}
-            disabled={submitted}
-            placeholder="輸入答案..."
+            disabled={showResult}
+            placeholder="Type your answer..."
             autoComplete="off"
           />
         ) : (
           <div className="choice-grid">
             {currentQuestion.options.map((opt, i) => {
               let btnClass = 'choice-btn'
-              if (submitted) {
+              if (showResult) {
                 if (opt === currentQuestion.answer) {
                   btnClass += ' feedback-correct'
                 } else if (opt === selectedOption && !isCorrect) {
@@ -216,8 +234,8 @@ export default function QuizPage() {
                 <button
                   key={i}
                   className={btnClass}
-                  onClick={() => !submitted && setSelectedOption(opt)}
-                  disabled={submitted}
+                  onClick={() => !showResult && setSelectedOption(opt)}
+                  disabled={showResult}
                 >
                   {opt}
                 </button>
@@ -227,7 +245,7 @@ export default function QuizPage() {
         )}
 
         {/* Submit / Feedback */}
-        {!submitted ? (
+        {!showResult ? (
           <button
             className="submit-btn"
             onClick={handleSubmit}
@@ -236,7 +254,7 @@ export default function QuizPage() {
               (currentQuestion.type === 'choice' && !selectedOption)
             }
           >
-            ✅ 檢查答案
+            ✅ Check Answer
           </button>
         ) : (
           <div>
@@ -246,15 +264,14 @@ export default function QuizPage() {
               </div>
             ) : (
               <div className="feedback-wrong">
-                {getRandomMessage(WRONG_MESSAGES)}
                 <div style={{ marginTop: 8, fontWeight: 700, color: 'var(--text-light)' }}>
-                  答案係：{currentQuestion.answer}
+                  The correct answer is: {currentQuestion.answer}
                 </div>
               </div>
             )}
 
             <button className="submit-btn" onClick={handleNext}>
-              {currentIndex < TOTAL_QUESTIONS - 1 ? '➡️ 下一題' : '📊 睇結果'}
+              {currentIndex < TOTAL_QUESTIONS - 1 ? '➡️ Next' : '📊 View Results'}
             </button>
           </div>
         )}

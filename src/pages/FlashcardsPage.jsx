@@ -3,9 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { flashcards } from '../data/englishData.js'
 
 const DECK_LIST = [
-  { id: 'chapter2', icon: '📗', name: 'Chapter 2', desc: 'Past Tense Verbs 過去式動詞', className: 'chapter-card-ch2' },
-  { id: 'chapter5', icon: '📘', name: 'Chapter 5', desc: 'Prepositions & Good at 位置介詞', className: 'chapter-card-ch5' },
-  { id: 'bonus', icon: '📙', name: 'Bonus', desc: 'Present Continuous 現在進行式', className: 'chapter-card-bonus' },
+  { id: 'chapter2', icon: '📗', name: 'Chapter 2', desc: 'Past Tense Verbs', className: 'chapter-card-ch2' },
+  { id: 'chapter5', icon: '📘', name: 'Chapter 5', desc: 'Prepositions & Good at', className: 'chapter-card-ch5' },
+  { id: 'bonus', icon: '📙', name: 'Bonus', desc: 'Present Continuous', className: 'chapter-card-bonus' },
 ]
 
 export default function FlashcardsPage() {
@@ -25,13 +25,13 @@ function DeckSelection() {
       {/* Header */}
       <div className="chapter-header">
         <Link to="/" className="back-btn">← Back</Link>
-        <span style={{ fontSize: 18, fontWeight: 800 }}>🃏 Flashcards 生字卡</span>
+        <span style={{ fontSize: 18, fontWeight: 800 }}>🃏 Flashcards</span>
         <div />
       </div>
 
       <div style={{ padding: '0 16px' }}>
         <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-light)', marginTop: 8, marginBottom: 16, textAlign: 'center' }}>
-          揀一個章節嚟溫習～
+          Pick a chapter to study!
         </div>
 
         {DECK_LIST.map((deck) => (
@@ -117,7 +117,7 @@ function FlashcardViewer({ chapterId, deck }) {
           {flipped ? currentCard.back : currentCard.front}
         </div>
         <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-light)', marginTop: 12 }}>
-          {flipped ? '👆 點一下翻轉' : '👆 點一下睇答案'}
+          {flipped ? '👆 Tap to flip back' : '👆 Tap to see answer'}
         </div>
       </div>
 
@@ -144,7 +144,7 @@ function FlashcardViewer({ chapterId, deck }) {
 
       {/* Keyboard hint */}
       <div style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: 'var(--text-light)', marginTop: 8 }}>
-        ⌨️ ← → 切換卡片 · Space/Enter 翻轉
+        ⌨️ ← → Switch card · Space/Enter Flip
       </div>
 
       {/* Progress bar */}

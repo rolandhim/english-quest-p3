@@ -6,7 +6,7 @@ import { useProgress } from '../hooks/useProgress.js'
 
 const WRITING_CONFIG = {
   chapter2: {
-    title: '✏️ Diary Entry 日記',
+    title: '✏️ Diary Entry',
     type: 'diary',
     prompts: [
       'Yesterday, I ___.',
@@ -15,7 +15,7 @@ const WRITING_CONFIG = {
     ],
   },
   chapter5: {
-    title: '👫 My Best Friend 我嘅好朋友',
+    title: '👫 My Best Friend',
     type: 'friend',
     prompts: [
       'My best friend is ___.',
@@ -24,7 +24,7 @@ const WRITING_CONFIG = {
     ],
   },
   bonus: {
-    title: '🖼️ Picture Description 圖片描述',
+    title: '🖼️ Picture Description',
     type: 'description',
     prompts: [
       'The boy is ___.',
@@ -35,18 +35,14 @@ const WRITING_CONFIG = {
 }
 
 const CORRECT_MESSAGES = [
-  '🌟 啱晒！Great job!',
-  '✅ 好嘢！You got it!',
-  '🎉 正確！Well done!',
-  '💪 叻仔叻女！Excellent!',
-  '⭐ 答對啦！Keep it up!',
+  '🌟 Great job!',
+  '✅ You got it!',
+  '🎉 Well done!',
+  '💪 Excellent!',
+  '⭐ Keep it up!',
 ]
 
-const WRONG_MESSAGES = [
-  '🤔 差少少，再試試！',
-  '💪 加油！唔好放棄！',
-  '📖 睇下上面嘅 rules 先～',
-]
+const TRY_AGAIN_MESSAGE = 'Not quite! Look at the hint above and try again! 💪'
 
 function getRandomMessage(messages) {
   return messages[Math.floor(Math.random() * messages.length)]
@@ -76,7 +72,8 @@ export default function ChapterPage() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [userAnswer, setUserAnswer] = useState('')
   const [selectedOption, setSelectedOption] = useState('')
-  const [submitted, setSubmitted] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+  const [attempts, setAttempts] = useState(0)
   const [isCorrect, setIsCorrect] = useState(false)
   const [completedSet, setCompletedSet] = useState(new Set())
   const [saving, setSaving] = useState(false)
@@ -87,17 +84,19 @@ export default function ChapterPage() {
   const [savingWriting, setSavingWriting] = useState(false)
 
   const currentExercise = exercises[currentIndex]
+  const MAX_ATTEMPTS = 2
 
   // Reset exercise state when switching exercises
   function resetExercise() {
     setUserAnswer('')
     setSelectedOption('')
-    setSubmitted(false)
+    setShowResult(false)
+    setAttempts(0)
     setIsCorrect(false)
   }
 
   function handleSubmit() {
-    if (!currentExercise || submitted) return
+    if (!currentExercise || showResult) return
 
     let correct = false
     if (currentExercise.type === 'fill') {
@@ -107,16 +106,31 @@ export default function ChapterPage() {
     }
 
     setIsCorrect(correct)
-    setSubmitted(true)
 
-    // Save progress
-    setSaving(true)
-    saveProgress(chapterId, currentExercise.id, correct).finally(() => {
-      setSaving(false)
-    })
+    if (correct) {
+      setShowResult(true)
+    } else {
+      const newAttempts = attempts + 1
+      setAttempts(newAttempts)
+      if (newAttempts >= MAX_ATTEMPTS) {
+        setShowResult(true)
+      } else {
+        // Clear input for retry
+        setUserAnswer('')
+        setSelectedOption('')
+      }
+    }
 
-    if (!completedSet.has(currentExercise.id)) {
-      setCompletedSet(new Set([...completedSet, currentExercise.id]))
+    // Save progress only when fully resolved (correct or out of attempts)
+    if (correct || attempts + 1 >= MAX_ATTEMPTS) {
+      setSaving(true)
+      saveProgress(chapterId, currentExercise.id, correct).finally(() => {
+        setSaving(false)
+      })
+
+      if (!completedSet.has(currentExercise.id)) {
+        setCompletedSet(new Set([...completedSet, currentExercise.id]))
+      }
     }
   }
 
@@ -143,7 +157,7 @@ export default function ChapterPage() {
 
   // Handle Enter key for fill inputs
   function handleKeyDown(e) {
-    if (e.key === 'Enter' && !submitted) {
+    if (e.key === 'Enter' && !showResult) {
       handleSubmit()
     }
   }
@@ -179,7 +193,7 @@ export default function ChapterPage() {
           <div style={{ fontSize: 48, marginBottom: 12 }}>🎉</div>
           <div className="exercise-question">All exercises completed!</div>
           <div style={{ fontSize: 14, color: 'var(--text-light)', fontWeight: 600, marginTop: 8 }}>
-            全部做晒啦！你好叻！👏
+            Great work! Keep practising! 👏
           </div>
         </div>
       )
@@ -188,6 +202,7 @@ export default function ChapterPage() {
     const totalExercises = exercises.length
     const completedCount = completedSet.size
     const progressPct = totalExercises > 0 ? Math.round((completedCount / totalExercises) * 100) : 0
+    const firstAttemptWrong = attempts > 0 && !showResult
 
     return (
       <div className="exercise-card slide-up">
@@ -210,17 +225,24 @@ export default function ChapterPage() {
         <div className="exercise-question">{currentExercise.question}</div>
         <div className="exercise-hint">{currentExercise.hint}</div>
 
+        {/* First attempt wrong - try again message */}
+        {firstAttemptWrong && (
+          <div className="feedback-retry">
+            {TRY_AGAIN_MESSAGE}
+          </div>
+        )}
+
         {/* Input area */}
         {currentExercise.type === 'fill' ? (
           <div>
             <input
-              className={`fill-input ${submitted ? (isCorrect ? 'fill-input-correct' : 'fill-input-wrong') : ''}`}
+              className={`fill-input ${showResult ? (isCorrect ? 'fill-input-correct' : 'fill-input-wrong') : ''}`}
               type="text"
               value={userAnswer}
               onChange={(e) => setUserAnswer(e.target.value)}
               onKeyDown={handleKeyDown}
-              disabled={submitted}
-              placeholder="輸入答案..."
+              disabled={showResult}
+              placeholder="Type your answer..."
               autoComplete="off"
             />
           </div>
@@ -228,9 +250,9 @@ export default function ChapterPage() {
           <div className="choice-grid">
             {currentExercise.options.map((opt, i) => {
               let btnClass = 'choice-btn'
-              if (!submitted && selectedOption === opt) {
+              if (!showResult && selectedOption === opt) {
                 btnClass += ' choice-btn-selected'
-              } else if (submitted) {
+              } else if (showResult) {
                 if (opt === currentExercise.answer) {
                   btnClass += ' choice-btn-correct'
                 } else if (opt === selectedOption && !isCorrect) {
@@ -241,8 +263,8 @@ export default function ChapterPage() {
                 <button
                   key={i}
                   className={btnClass}
-                  onClick={() => !submitted && setSelectedOption(opt)}
-                  disabled={submitted}
+                  onClick={() => !showResult && setSelectedOption(opt)}
+                  disabled={showResult}
                 >
                   {opt}
                 </button>
@@ -252,7 +274,7 @@ export default function ChapterPage() {
         )}
 
         {/* Submit / Feedback */}
-        {!submitted ? (
+        {!showResult ? (
           <button
             className="submit-btn"
             onClick={handleSubmit}
@@ -262,7 +284,7 @@ export default function ChapterPage() {
               saving
             }
           >
-            {saving ? '⏳ 儲存中...' : '✅ 檢查答案'}
+            {saving ? '⏳ Saving...' : '✅ Check Answer'}
           </button>
         ) : (
           <div>
@@ -272,22 +294,21 @@ export default function ChapterPage() {
               </div>
             ) : (
               <div className="feedback-wrong">
-                {getRandomMessage(WRONG_MESSAGES)}
                 <div className="feedback-explain">
-                  答案係：{currentExercise.answer}
+                  The correct answer is: {currentExercise.answer}
                 </div>
               </div>
             )}
 
             {currentIndex < exercises.length - 1 && (
               <button className="submit-btn" onClick={handleNext}>
-                ➡️ 下一題
+                ➡️ Next
               </button>
             )}
 
             {currentIndex === exercises.length - 1 && (
               <Link to="/" className="submit-btn" style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}>
-                🏠 返去主頁
+                🏠 Back to Home
               </Link>
             )}
           </div>
@@ -305,7 +326,7 @@ export default function ChapterPage() {
       <div className="writing-section slide-up">
         <div className="writing-title">{writingConfig.title}</div>
         <div className="writing-prompt">
-          用下面嘅句子開頭，完成你嘅文章：<br />
+          Use these sentence starters to complete your writing:<br />
           {writingConfig.prompts.map((p, i) => (
             <span key={i} style={{ display: 'block', marginTop: i > 0 ? 4 : 8 }}>
               {i + 1}. {p}
@@ -316,17 +337,17 @@ export default function ChapterPage() {
           className="writing-textarea"
           value={writingContent}
           onChange={(e) => setWritingContent(e.target.value)}
-          placeholder="喺度寫你嘅文章..."
+          placeholder="Write your composition here..."
         />
         <button
           className="writing-save-btn"
           onClick={handleWritingSave}
           disabled={!writingContent.trim() || savingWriting}
         >
-          {savingWriting ? '⏳ 儲存中...' : '💾 儲存'}
+          {savingWriting ? '⏳ Saving...' : '💾 Save'}
         </button>
         {writingSaved && (
-          <div className="writing-saved">Saved! ✅ 儲存成功！</div>
+          <div className="writing-saved">Saved! ✅</div>
         )}
       </div>
     )
@@ -342,9 +363,9 @@ export default function ChapterPage() {
         </div>
         <div style={{ textAlign: 'center', padding: 40 }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>😅</div>
-          <div style={{ fontSize: 18, fontWeight: 800 }}>呢個章節不存在</div>
+          <div style={{ fontSize: 18, fontWeight: 800 }}>This chapter does not exist</div>
           <Link to="/" className="submit-btn" style={{ display: 'inline-block', marginTop: 20, padding: '12px 24px', textDecoration: 'none' }}>
-            🏠 返去主頁
+            🏠 Back to Home
           </Link>
         </div>
       </div>
@@ -376,14 +397,14 @@ export default function ChapterPage() {
           className={`exercise-tab ${activeTab === 'exercises' ? 'exercise-tab-active' : ''}`}
           onClick={() => setActiveTab('exercises')}
         >
-          📝 Exercises 練習
+          📝 Exercises
         </button>
         {writingConfig && (
           <button
             className={`exercise-tab ${activeTab === 'writing' ? 'exercise-tab-active' : ''}`}
             onClick={() => setActiveTab('writing')}
           >
-            ✍️ Writing 寫作
+            ✍️ Writing
           </button>
         )}
       </div>

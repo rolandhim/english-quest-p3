@@ -33,13 +33,13 @@ export default function ProgressPage() {
       {/* Header */}
       <div className="chapter-header">
         <Link to="/" className="back-btn">← Back</Link>
-        <span style={{ fontSize: 18, fontWeight: 800 }}>📊 Progress 學習進度</span>
+        <span style={{ fontSize: 18, fontWeight: 800 }}>📊 My Progress</span>
         <div />
       </div>
 
       {/* Overall Stats Card */}
       <div className="progress-card">
-        <div className="progress-card-title">🏆 Overall 整體成績</div>
+        <div className="progress-card-title">🏆 Overall</div>
         <div className="progress-stat-grid">
           <div className="progress-stat-card">
             <div className="progress-stat-icon">⭐</div>
@@ -66,7 +66,7 @@ export default function ProgressPage() {
 
       {/* Progress Per Chapter */}
       <div className="progress-card">
-        <div className="progress-card-title">📖 Chapter Progress 章節進度</div>
+        <div className="progress-card-title">📖 Chapter Progress</div>
         {CHAPTER_INFO.map((ch) => {
           const exercises = rules[ch.id]?.exercises || []
           const totalQ = exercises.length
@@ -100,10 +100,10 @@ export default function ProgressPage() {
 
       {/* Quiz History */}
       <div className="progress-card">
-        <div className="progress-card-title">📋 Quiz History 測驗記錄</div>
+        <div className="progress-card-title">📋 Quiz History</div>
         {quizResults.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 20, color: 'var(--text-light)', fontWeight: 600 }}>
-            未有測驗記錄～去主頁開始一個啦！🎯
+            No quiz records yet. Start one from the home page! 🎯
           </div>
         ) : (
           [...quizResults].reverse().map((result, i) => (
@@ -120,7 +120,7 @@ export default function ProgressPage() {
                 ⭐ +{result.starEarned} stars
                 {result.bonus > 0 && (
                   <span style={{ color: 'var(--green-dark)', marginLeft: 6 }}>
-                    🎉 滿分獎勵 +{result.bonus}!
+                    🎉 Perfect score bonus +{result.bonus}!
                   </span>
                 )}
               </div>
@@ -132,7 +132,7 @@ export default function ProgressPage() {
       {/* Back to Home */}
       <div style={{ textAlign: 'center', marginTop: 20, marginBottom: 30 }}>
         <Link to="/" className="submit-btn" style={{ display: 'inline-block', padding: '12px 28px', textDecoration: 'none' }}>
-          🏠 返去主頁
+          🏠 Back to Home
         </Link>
       </div>
     </div>
