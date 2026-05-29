@@ -196,7 +196,9 @@ export default function QuizPage() {
 
         {/* Question */}
         <div className="exercise-question">{currentQuestion.question}</div>
-        {currentQuestion.hint && (
+
+        {/* Hint - only show after first wrong attempt */}
+        {firstAttemptWrong && currentQuestion.hint && (
           <div className="exercise-hint">{currentQuestion.hint}</div>
         )}
 

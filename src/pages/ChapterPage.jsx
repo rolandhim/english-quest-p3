@@ -223,7 +223,9 @@ export default function ChapterPage() {
 
         {/* Question */}
         <div className="exercise-question">{currentExercise.question}</div>
-        {currentExercise.hint && (
+
+        {/* Hint - only show after first wrong attempt */}
+        {firstAttemptWrong && currentExercise.hint && (
           <div className="exercise-hint">{currentExercise.hint}</div>
         )}
 

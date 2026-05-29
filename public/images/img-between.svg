@@ -18,5 +18,4 @@
   <rect x="230" y="90" width="20" height="12" rx="4" fill="#1565C0"/>
   
   <!-- Label -->
-  <text x="160" y="190" text-anchor="middle" font-size="16" font-weight="bold" fill="#E65100">between</text>
 </svg>

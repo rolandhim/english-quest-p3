@@ -22,5 +22,4 @@
   <path d="M155,155 Q120,170 100,140" fill="none" stroke="#FF8A65" stroke-width="6" stroke-linecap="round"/>
   
   <!-- Label -->
-  <text x="160" y="190" text-anchor="middle" font-size="16" font-weight="bold" fill="#BF360C">behind</text>
 </svg>

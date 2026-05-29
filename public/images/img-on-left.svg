@@ -26,5 +26,4 @@
   <text x="80" y="155" text-anchor="middle" font-size="14" font-weight="bold" fill="#5D4037">← LEFT</text>
   
   <!-- Bottom label -->
-  <text x="160" y="190" text-anchor="middle" font-size="16" font-weight="bold" fill="#E65100">on the left</text>
 </svg>
