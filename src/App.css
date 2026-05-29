@@ -541,6 +541,25 @@ body {
   border-radius: var(--radius-sm);
 }
 
+/* ── Question Image ───────────────────────────────── */
+
+.question-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.question-image {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  background: #FFFDE7;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
 /* ── Fill input ────────────────────────────────────── */
 
 .fill-input {

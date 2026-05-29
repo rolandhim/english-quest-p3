@@ -196,7 +196,20 @@ export default function QuizPage() {
 
         {/* Question */}
         <div className="exercise-question">{currentQuestion.question}</div>
-        <div className="exercise-hint">{currentQuestion.hint}</div>
+        {currentQuestion.hint && (
+          <div className="exercise-hint">{currentQuestion.hint}</div>
+        )}
+
+        {/* Preposition image */}
+        {currentQuestion.image && (
+          <div className="question-image-wrapper">
+            <img
+              className="question-image"
+              src={`/images/${currentQuestion.image}.svg`}
+              alt={currentQuestion.image.replace('img-', '')}
+            />
+          </div>
+        )}
 
         {/* First attempt wrong - try again message */}
         {firstAttemptWrong && (

@@ -223,7 +223,20 @@ export default function ChapterPage() {
 
         {/* Question */}
         <div className="exercise-question">{currentExercise.question}</div>
-        <div className="exercise-hint">{currentExercise.hint}</div>
+        {currentExercise.hint && (
+          <div className="exercise-hint">{currentExercise.hint}</div>
+        )}
+
+        {/* Preposition image */}
+        {currentExercise.image && (
+          <div className="question-image-wrapper">
+            <img
+              className="question-image"
+              src={`/images/${currentExercise.image}.svg`}
+              alt={currentExercise.image.replace('img-', '')}
+            />
+          </div>
+        )}
 
         {/* First attempt wrong - try again message */}
         {firstAttemptWrong && (
